@@ -1,5 +1,6 @@
 from typing import Annotated
 from fastapi import Query
+from fastmcp import Context
 from llms.domain.ollama_schema import PromptRequest, PromptResponse
 from server import mcp
 from tools.application.translation_service import TranslationService
@@ -7,6 +8,8 @@ from tools.interface.dto.header import CustomHeader
 from tools.interface.dto.response import ToolResponse
 from log.log_config import get_logger
 from dependency_injector.wiring import inject
+
+from utils.http import get_bearer_token
 
 logger = get_logger()
 
@@ -31,11 +34,11 @@ PROMPT = """당신은 사용자가 말하는 문장을 {target}로 번역하는 
 async def translate(
     text: Annotated[str, Query(description="번역할 문장")],
     target: Annotated[str, Query(description="번역할 언어")],
-    _headers: CustomHeader,
+    ctx: Context,
 ) -> ToolResponse:
-    logger.info(
-        f"[MCP TOOL] translate called for {text} to {target}, headers: {_headers}"
-    )
+
+    token = get_bearer_token(ctx)
+    logger.info(f"[MCP TOOL] translate called headers: {token}")
     from containers import Container
 
     translation_service: TranslationService = Container.translation_service()

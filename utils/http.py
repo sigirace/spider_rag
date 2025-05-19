@@ -6,7 +6,7 @@ def get_bearer_token(ctx: Context):
     headers = request.headers
 
     # Check if 'Authorization' header is present
-    authorization_header = headers.get("X_User_Token")
+    authorization_header = headers.get("Authorization")
 
     if authorization_header:
         # Split the header into 'Bearer <token>'
